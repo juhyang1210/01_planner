@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Campus Planner</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <h1>Smart Campus Planner</h1>
+      <p class="app-subtitle">대학원생을 위한 할 일 관리</p>
+    </header>
+
+    <section class="card progress-card">
+      <div class="progress-header">
+        <h2>전체 완료율</h2>
+        <span id="completion-rate-text" class="completion-rate-text">0%</span>
+      </div>
+      <div class="progress-bar-track">
+        <div id="completion-rate-bar" class="progress-bar-fill" style="width: 0%"></div>
+      </div>
+      <p id="progress-sub" class="progress-sub">완료 0개 / 전체 0개</p>
+    </section>
+
+    <div class="summary-dashboard">
+      <div class="summary-card">
+        <span class="summary-icon">📅</span>
+        <span id="summary-today-count" class="summary-value">0개</span>
+        <span class="summary-label">오늘 할 일</span>
+      </div>
+      <div class="summary-card">
+        <span class="summary-icon">🗓️</span>
+        <span id="summary-week-count" class="summary-value">0개</span>
+        <span class="summary-label">이번 주 마감</span>
+      </div>
+      <div class="summary-card summary-card-overdue">
+        <span class="summary-icon">⏰</span>
+        <span id="summary-overdue-count" class="summary-value">0개</span>
+        <span class="summary-label">기한 지남</span>
+      </div>
+    </div>
+
+    <section class="card">
+      <h2 id="form-title">할 일 추가</h2>
+      <form id="todo-form" class="todo-form">
+        <input type="hidden" id="editing-id" value="" />
+        <div class="form-row">
+          <label for="title">할 일 제목</label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            placeholder="예: 랩미팅 발표 자료 준비"
+            required
+          />
+        </div>
+
+        <div class="form-row form-row-inline">
+          <div class="form-field">
+            <label for="category">카테고리</label>
+            <select id="category" name="category">
+              <option value="BK">BK</option>
+              <option value="랩실">랩실(수업)</option>
+              <option value="프로젝트">프로젝트</option>
+              <option value="스터디">스터디</option>
+              <option value="개인">개인</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="priority">중요도 (선택)</label>
+            <select id="priority" name="priority">
+              <option value="" selected>선택 안 함</option>
+              <option value="상">상</option>
+              <option value="중">중</option>
+              <option value="하">하</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row form-row-inline">
+          <div class="form-field">
+            <label for="start-date">시작일 (선택)</label>
+            <input type="date" id="start-date" name="startDate" />
+          </div>
+
+          <div class="form-field">
+            <label for="end-date">마감일</label>
+            <input type="date" id="end-date" name="endDate" required />
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" id="submit-btn" class="btn btn-primary">추가</button>
+          <button type="button" id="cancel-edit-btn" class="btn btn-secondary hidden">수정 취소</button>
+        </div>
+      </form>
+    </section>
+
+    <div class="view-tabs">
+      <button type="button" id="tab-list" class="tab-btn tab-active">📋 목록 보기</button>
+      <button type="button" id="tab-calendar" class="tab-btn">📅 캘린더 보기</button>
+    </div>
+
+    <section class="card" id="list-view">
+      <div class="list-header">
+        <h2>할 일 목록</h2>
+        <span id="todo-count" class="todo-count">0개</span>
+      </div>
+
+      <input
+        type="text"
+        id="search-input"
+        class="search-input"
+        placeholder="할 일 검색..."
+      />
+
+      <div class="filter-row">
+        <button type="button" class="filter-btn date-filter-btn filter-active" data-filter="all">전체</button>
+        <button type="button" class="filter-btn date-filter-btn" data-filter="today">오늘</button>
+        <button type="button" class="filter-btn date-filter-btn" data-filter="week">이번 주</button>
+        <button type="button" class="filter-btn date-filter-btn" data-filter="completed">완료</button>
+        <button type="button" class="filter-btn date-filter-btn" data-filter="incomplete">미완료</button>
+      </div>
+
+      <div class="filter-row">
+        <label for="category-filter" class="category-filter-label">카테고리</label>
+        <select id="category-filter" class="category-filter-select">
+          <option value="all">전체 카테고리</option>
+          <option value="BK">BK</option>
+          <option value="랩실">랩실(수업)</option>
+          <option value="프로젝트">프로젝트</option>
+          <option value="스터디">스터디</option>
+          <option value="개인">개인</option>
+        </select>
+      </div>
+
+      <ul id="todo-list" class="todo-list">
+        <!-- 할 일 항목이 여기에 자바스크립트로 추가됩니다 -->
+      </ul>
+      <p id="empty-message" class="empty-message">
+        등록된 할 일이 없습니다. 위에서 새 할 일을 추가해 보세요.
+      </p>
+    </section>
+
+    <section class="card hidden" id="calendar-view">
+      <div class="calendar-header">
+        <button type="button" id="prev-month-btn" class="calendar-nav-btn" aria-label="이전 달">‹</button>
+        <h2 id="calendar-title">0000년 00월</h2>
+        <button type="button" id="next-month-btn" class="calendar-nav-btn" aria-label="다음 달">›</button>
+      </div>
+      <div class="calendar-weekdays">
+        <span class="weekday weekday-sun">일</span>
+        <span class="weekday">월</span>
+        <span class="weekday">화</span>
+        <span class="weekday">수</span>
+        <span class="weekday">목</span>
+        <span class="weekday">금</span>
+        <span class="weekday weekday-sat">토</span>
+      </div>
+      <div id="calendar-grid" class="calendar-grid">
+        <!-- 날짜 칸이 여기에 자바스크립트로 추가됩니다 -->
+      </div>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
